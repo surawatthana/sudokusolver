@@ -24,11 +24,13 @@ public class SudokuEngine {
 
             if (hashCodeBefore == hashCodeAfter) {
                 countSame++;
-                if (countSame == 1) {
+                if (countSame == 3) {
                     break;
 
+                    // TMB algorithm
 
-                    // do a more advance solving algorithm
+                    // LCR algorithm
+
                 }
             } else {
                 countSame = 0;
@@ -36,6 +38,11 @@ public class SudokuEngine {
             }
         }
         return this.tableOfNodes;
+    }
+
+
+    private boolean tmbTechnique(Node[][] tableOfNodes, boolean allNumberSet) {
+
     }
 
     private boolean basicSolving(Node[][] tableOfNodes, boolean allNumberSet) {
