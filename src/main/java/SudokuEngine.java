@@ -13,7 +13,7 @@ public class SudokuEngine {
         this.tableOfNodes = tableOfNodes;
 
         boolean allNumberSet = false;
-        int countSame = 0;
+        byte countSame = 0;
 
         while (!allNumberSet) {
             int hashCodeBefore = Arrays.deepHashCode(this.tableOfNodes);

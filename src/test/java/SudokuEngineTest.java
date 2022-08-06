@@ -22,6 +22,11 @@ public class SudokuEngineTest {
         testOutput(expectedOutputLevel4b(), new SudokuEngine().solveSudoku(initialiseInputsLevel4b()));
     }
 
+    @Test
+    public void shouldReturnCorrectResultForLevel4c() {
+        testOutput(expectedOutputLevel4c(), new SudokuEngine().solveSudoku(initialiseInputsLevel4c()));
+    }
+
     private Node[][] expectedOutputLevel3() {
         Map<String, Byte> expectedMap = new HashMap<>();
         expectedMap.put("00", (byte) 6);
@@ -317,6 +322,160 @@ public class SudokuEngineTest {
         expectedMap.put("86", (byte) 8);
         expectedMap.put("87", (byte) 4);
         expectedMap.put("88", (byte) 1);
+
+        Node[][] expectedResult = new Node[9][9];
+
+        for (byte i = 0; i < 9; i++) {
+            for (byte j = 0; j < 9; j++) {
+                expectedResult[i][j] = (expectedMap.get(i + "" + j) != null) ? new Node(i, j, expectedMap.get(i + "" + j)) : new Node(i, j);
+            }
+        }
+        return expectedResult;
+    }
+
+    private Node[][] expectedOutputLevel4c() {
+        Map<String, Byte> expectedMap = new HashMap<>();
+        expectedMap.put("00", (byte) 5);
+        expectedMap.put("01", (byte) 8);
+        expectedMap.put("02", (byte) 6);
+        expectedMap.put("03", (byte) 2);
+        expectedMap.put("04", (byte) 7);
+        expectedMap.put("05", (byte) 1);
+        expectedMap.put("06", (byte) 3);
+        expectedMap.put("07", (byte) 9);
+        expectedMap.put("08", (byte) 4);
+
+        expectedMap.put("10", (byte) 9);
+        expectedMap.put("11", (byte) 3);
+        expectedMap.put("12", (byte) 7);
+        expectedMap.put("13", (byte) 4);
+        expectedMap.put("14", (byte) 6);
+        expectedMap.put("15", (byte) 8);
+        expectedMap.put("16", (byte) 2);
+        expectedMap.put("17", (byte) 1);
+        expectedMap.put("18", (byte) 5);
+
+        expectedMap.put("20", (byte) 1);
+        expectedMap.put("21", (byte) 2);
+        expectedMap.put("22", (byte) 4);
+        expectedMap.put("23", (byte) 3);
+        expectedMap.put("24", (byte) 5);
+        expectedMap.put("25", (byte) 9);
+        expectedMap.put("26", (byte) 7);
+        expectedMap.put("27", (byte) 6);
+        expectedMap.put("28", (byte) 8);
+
+        expectedMap.put("30", (byte) 7);
+        expectedMap.put("31", (byte) 6);
+        expectedMap.put("32", (byte) 9);
+        expectedMap.put("33", (byte) 5);
+        expectedMap.put("34", (byte) 8);
+        expectedMap.put("35", (byte) 2);
+        expectedMap.put("36", (byte) 4);
+        expectedMap.put("37", (byte) 3);
+        expectedMap.put("38", (byte) 1);
+
+        expectedMap.put("40", (byte) 3);
+        expectedMap.put("41", (byte) 4);
+        expectedMap.put("42", (byte) 2);
+        expectedMap.put("43", (byte) 6);
+        expectedMap.put("44", (byte) 1);
+        expectedMap.put("45", (byte) 7);
+        expectedMap.put("46", (byte) 8);
+        expectedMap.put("47", (byte) 5);
+        expectedMap.put("48", (byte) 9);
+
+        expectedMap.put("50", (byte) 8);
+        expectedMap.put("51", (byte) 1);
+        expectedMap.put("52", (byte) 5);
+        expectedMap.put("53", (byte) 9);
+        expectedMap.put("54", (byte) 3);
+        expectedMap.put("55", (byte) 4);
+        expectedMap.put("56", (byte) 6);
+        expectedMap.put("57", (byte) 2);
+        expectedMap.put("58", (byte) 7);
+
+        expectedMap.put("60", (byte) 2);
+        expectedMap.put("61", (byte) 7);
+        expectedMap.put("62", (byte) 3);
+        expectedMap.put("63", (byte) 8);
+        expectedMap.put("64", (byte) 9);
+        expectedMap.put("65", (byte) 5);
+        expectedMap.put("66", (byte) 1);
+        expectedMap.put("67", (byte) 4);
+        expectedMap.put("68", (byte) 6);
+
+        expectedMap.put("70", (byte) 6);
+        expectedMap.put("71", (byte) 5);
+        expectedMap.put("72", (byte) 8);
+        expectedMap.put("73", (byte) 1);
+        expectedMap.put("74", (byte) 4);
+        expectedMap.put("75", (byte) 3);
+        expectedMap.put("76", (byte) 9);
+        expectedMap.put("77", (byte) 7);
+        expectedMap.put("78", (byte) 2);
+
+        expectedMap.put("80", (byte) 4);
+        expectedMap.put("81", (byte) 9);
+        expectedMap.put("82", (byte) 1);
+        expectedMap.put("83", (byte) 7);
+        expectedMap.put("84", (byte) 2);
+        expectedMap.put("85", (byte) 6);
+        expectedMap.put("86", (byte) 5);
+        expectedMap.put("87", (byte) 8);
+        expectedMap.put("88", (byte) 3);
+
+        Node[][] expectedResult = new Node[9][9];
+
+        for (byte i = 0; i < 9; i++) {
+            for (byte j = 0; j < 9; j++) {
+                expectedResult[i][j] = (expectedMap.get(i + "" + j) != null) ? new Node(i, j, expectedMap.get(i + "" + j)) : new Node(i, j);
+            }
+        }
+        return expectedResult;
+    }
+
+    private Node[][] initialiseInputsLevel4c() {
+        Map<String, Byte> expectedMap = new HashMap<>();
+        expectedMap.put("01", (byte) 8);
+        expectedMap.put("02", (byte) 6);
+        expectedMap.put("03", (byte) 2);
+        expectedMap.put("07", (byte) 9);
+
+        expectedMap.put("10", (byte) 9);
+        expectedMap.put("11", (byte) 3);
+        expectedMap.put("12", (byte) 7);
+        expectedMap.put("14", (byte) 6);
+        expectedMap.put("18", (byte) 5);
+
+        expectedMap.put("25", (byte) 9);
+        expectedMap.put("28", (byte) 8);
+
+        expectedMap.put("30", (byte) 7);
+        expectedMap.put("36", (byte) 4);
+        expectedMap.put("38", (byte) 1);
+
+        expectedMap.put("42", (byte) 2);
+        expectedMap.put("43", (byte) 6);
+        expectedMap.put("44", (byte) 1);
+
+        expectedMap.put("52", (byte) 5);
+        expectedMap.put("55", (byte) 4);
+        expectedMap.put("57", (byte) 2);
+
+        expectedMap.put("62", (byte) 3);
+        expectedMap.put("63", (byte) 8);
+        expectedMap.put("68", (byte) 6);
+
+        expectedMap.put("72", (byte) 8);
+        expectedMap.put("73", (byte) 1);
+        expectedMap.put("74", (byte) 4);
+
+        expectedMap.put("82", (byte) 1);
+        expectedMap.put("83", (byte) 7);
+        expectedMap.put("84", (byte) 2);
+        expectedMap.put("86", (byte) 5);
+        expectedMap.put("88", (byte) 3);
 
         Node[][] expectedResult = new Node[9][9];
 
