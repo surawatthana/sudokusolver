@@ -1,5 +1,3 @@
-import java.util.Set;
-
 public class Group {
     private Byte rowIndex, columnIndex;
 
@@ -42,6 +40,78 @@ public class Group {
             return groupEndColumn;
         }
         throw new RuntimeException("Column out of range");
+    }
+
+    public Byte getRowIndex() {
+        return rowIndex;
+    }
+
+    public Byte getColumnIndex() {
+        return columnIndex;
+    }
+
+    /**
+     * returning group number between 1-9
+     */
+    public static byte getSectionNumber(Group group) throws RuntimeException {
+        validation(group);
+
+        byte rowIndex = group.getRowIndex();
+        byte columnIndex = group.getColumnIndex();
+
+        // TODO: refactor this
+        if (rowIndex >= 0 && rowIndex <= 2) {
+            if (columnIndex >= 0 && columnIndex <= 2) {
+                return 1;
+            }
+            if (columnIndex >= 3 && columnIndex <= 5) {
+                return 2;
+            }
+            if (columnIndex >= 6 && columnIndex <= 8) {
+                return 3;
+            }
+        }
+
+        if (rowIndex >= 3 && rowIndex <= 5) {
+            if (columnIndex >= 0 && columnIndex <= 2) {
+                return 4;
+            }
+            if (columnIndex >= 3 && columnIndex <= 5) {
+                return 5;
+            }
+            if (columnIndex >= 6 && columnIndex <= 8) {
+                return 6;
+            }
+        }
+
+        if (rowIndex >= 6 && rowIndex <= 8) {
+            if (columnIndex >= 0 && columnIndex <= 2) {
+                return 7;
+            }
+            if (columnIndex >= 3 && columnIndex <= 5) {
+                return 8;
+            }
+            if (columnIndex >= 6 && columnIndex <= 8) {
+                return 9;
+            }
+        }
+
+        throw new RuntimeException("unable to determine group");
+
+    }
+
+    private static void validation(Group group) {
+        if (group == null) {
+            throw new RuntimeException("group cannot be null");
+        }
+
+        if (group.getRowIndex() == null) {
+            throw new RuntimeException("row index cannot be null");
+        }
+
+        if (group.getColumnIndex() == null) {
+            throw new RuntimeException("column index cannot be null");
+        }
     }
 
 

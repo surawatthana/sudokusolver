@@ -9,25 +9,12 @@ public class SudokuEngineTest {
 
     @Test
     public void shouldReturnCorrectResultForLevel3() {
-
-        Node[][] inputTable = initialiseInputsLevel3();
-
-        Node[][] expectedResult = expectedOutputLevel3();
-
-        Node[][] actualResult = new SudokuEngine().solveSudoku(inputTable);
-
-        testOutput(expectedResult, actualResult);
+        testOutput(expectedOutputLevel3(), new SudokuEngine().solveSudoku(initialiseInputsLevel3()));
     }
 
     @Test
     public void shouldReturnCorrectResultForLevel4a() {
-        Node[][] inputTable = initialiseInputsLevel4a();
-
-        Node[][] expectedResult = expectedOutputLevel4a();
-
-        Node[][] actualResult = new SudokuEngine().solveSudoku(inputTable);
-
-        testOutput(expectedResult, actualResult);
+        testOutput(expectedOutputLevel4a(), new SudokuEngine().solveSudoku(initialiseInputsLevel4a()));
     }
 
     @Test

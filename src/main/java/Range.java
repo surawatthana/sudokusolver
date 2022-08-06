@@ -17,6 +17,10 @@ public class Range {
         return MAX;
     }
 
+    public boolean isBetweenRange(byte number) {
+        return number >= MIN && number <= MAX ;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

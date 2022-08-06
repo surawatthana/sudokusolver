@@ -13,7 +13,7 @@ public class Main {
 
         Map<String, Byte> map = new HashMap<>();
 
-// level 2 problem (pass)
+        // level 2 problem (pass)
         map.put("02", (byte) 1);
         map.put("03", (byte) 3);
         map.put("06", (byte) 6);
