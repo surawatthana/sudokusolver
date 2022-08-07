@@ -12,37 +12,41 @@ public class SudokuEngine {
     public Node[][] solveSudoku(Node[][] tableOfNodes) {
         this.tableOfNodes = tableOfNodes;
 
-        boolean allNumberSet = false;
+        boolean areAllNumbersSet = false;
+        int hashCodeBefore = 0;
+        int hashCodeAfter = 0;
         byte countSame = 0;
 
-        while (!allNumberSet) {
-            int hashCodeBefore = Arrays.deepHashCode(this.tableOfNodes);
-            allNumberSet = basicSolving(tableOfNodes, allNumberSet);
-            int hashCodeAfter = Arrays.deepHashCode(this.tableOfNodes);
+        while (!areAllNumbersSet && countSame <= 1) {
+            hashCodeBefore = Arrays.deepHashCode(this.tableOfNodes);
+            areAllNumbersSet = basicSolving(tableOfNodes);
+            hashCodeAfter = Arrays.deepHashCode(this.tableOfNodes);
 
             if (hashCodeBefore == hashCodeAfter) {
                 countSame++;
-                if (countSame == 3) {
-                    boolean carryOnWithTMBTechnique = true;
-                    while(carryOnWithTMBTechnique) {
-                        hashCodeBefore = Arrays.deepHashCode(this.tableOfNodes);
-                        tmbTechnique(this.tableOfNodes, Row.TOP);
-                        tmbTechnique(this.tableOfNodes, Row.MIDDLE);
-                        tmbTechnique(this.tableOfNodes, Row.BOTTOM);
-                        hashCodeAfter = Arrays.deepHashCode(this.tableOfNodes);
-                        carryOnWithTMBTechnique = hashCodeBefore != hashCodeAfter;
-                    }
-                    // LCR algorithm
-                    continue;
-                }
             } else {
                 countSame = 0;
-                continue;
+            }
+
+            if (!areAllNumbersSet && (hashCodeBefore == hashCodeAfter)) {
+                boolean carryOnWithTMBTechnique = true;
+                while(carryOnWithTMBTechnique) {
+                    hashCodeBefore = Arrays.deepHashCode(this.tableOfNodes);
+                    tmbTechniqueAllRows();
+                    hashCodeAfter = Arrays.deepHashCode(this.tableOfNodes);
+                    carryOnWithTMBTechnique = hashCodeBefore != hashCodeAfter;
+                }
+                areAllNumbersSet = checkAllNumbersSet(this.tableOfNodes);
             }
         }
         return this.tableOfNodes;
     }
 
+    private void tmbTechniqueAllRows() {
+        tmbTechnique(this.tableOfNodes, Row.TOP);
+        tmbTechnique(this.tableOfNodes, Row.MIDDLE);
+        tmbTechnique(this.tableOfNodes, Row.BOTTOM);
+    }
 
     private void tmbTechnique(Node[][] tableOfNodes, Row rowEnum) {
         if (rowEnum == null) throw new RuntimeException("rowEnum cannot be null");
@@ -165,7 +169,7 @@ public class SudokuEngine {
         }
     }
 
-    private boolean basicSolving(Node[][] tableOfNodes, boolean allNumberSet) {
+    private boolean basicSolving(Node[][] tableOfNodes) {
         for (byte row = (byte) 0; row < (byte) 9; row++) {
             ROW_LEVEL:
             for (byte column = (byte) 0; column < (byte) 9; column++) {
@@ -197,8 +201,6 @@ public class SudokuEngine {
                             }
                         }
                     }
-
-                    allNumberSet = true;
                 } else {
                     continue;
                 }
@@ -206,7 +208,7 @@ public class SudokuEngine {
         }
         System.out.println();
         printTable();
-        return allNumberSet;
+        return checkAllNumbersSet(tableOfNodes);
     }
 
     private void gatherNumbersFromColumn(byte column, Set<Byte> numbersTaken) {
@@ -233,6 +235,16 @@ public class SudokuEngine {
                 }
             }
         }
+    }
+
+    private boolean checkAllNumbersSet(Node[][] tableOfNodes) {
+        for (byte row = 0; row < 9; row++) {
+            for (byte column = 0; column < 9; column++) {
+                if (tableOfNodes[row][column].getValue() == null)
+                    return false;
+            }
+        }
+        return true;
     }
 
     private void printTable() {
