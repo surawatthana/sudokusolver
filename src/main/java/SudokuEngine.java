@@ -28,7 +28,9 @@ public class SudokuEngine {
 
             areAllNumbersSet = checkAllNumbersSet(this.tableOfNodes);
 
+            cleanUpPossibleValuesThatBeenFilled(this.tableOfNodes);
             // run matching pair technique
+            System.out.println();
         }
         return this.tableOfNodes;
     }
@@ -257,6 +259,15 @@ public class SudokuEngine {
             }
         }
         return true;
+    }
+
+    private void cleanUpPossibleValuesThatBeenFilled(Node[][] tableOfNodes) {
+        for (byte row = 0; row < 9; row++) {
+            for (byte column = 0; column < 9; column++) {
+                if (tableOfNodes[row][column].getValue() != null)
+                    tableOfNodes[row][column].setPossibleValues(null);
+            }
+        }
     }
 
     private void printTable() {
