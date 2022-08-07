@@ -9,9 +9,10 @@ public class SudokuEngine {
 
     final private Set<Byte> ONE_TO_NINE = Set.of((byte) 1, (byte) 2, (byte) 3, (byte) 4, (byte) 5, (byte) 6, (byte) 7, (byte) 8, (byte) 9);
 
+    private final int ELIGIBLE_SIZE_MATCHING_PAIR = 3;
+
     public Node[][] solveSudoku(Node[][] tableOfNodes) {
         this.tableOfNodes = tableOfNodes;
-
         boolean areAllNumbersSet = false;
         int hashCodeBefore = 0;
         int hashCodeAfter = 0;
@@ -21,18 +22,60 @@ public class SudokuEngine {
             hashCodeBefore = Arrays.deepHashCode(this.tableOfNodes);
             areAllNumbersSet = basicSolving(tableOfNodes);
             hashCodeAfter = Arrays.deepHashCode(this.tableOfNodes);
-
             countSame = getCountSame(hashCodeBefore, hashCodeAfter, countSame);
 
             runTMBTechnique(areAllNumbersSet, hashCodeBefore, hashCodeAfter);
-
             areAllNumbersSet = checkAllNumbersSet(this.tableOfNodes);
 
-            cleanUpPossibleValuesThatBeenFilled(this.tableOfNodes);
-            // run matching pair technique
-            System.out.println();
+            removePossibleValuesFromNodesThatHaveBeenFilled(this.tableOfNodes);
         }
         return this.tableOfNodes;
+    }
+
+    private void matchingTechniqueByRow(Node[][] tableOfNodes) {
+        for (byte row = 0; row < 9; row++) {
+            List<Set<Byte>> possibleValuesList = new ArrayList<>();
+            for (byte column = 0; column < 9; column++) {
+                if (tableOfNodes[row][column].getValue() == null &&
+                        CollectionUtils.isNotEmpty(tableOfNodes[row][column].getPossibleValues()) ) {
+                    possibleValuesList.add(tableOfNodes[row][column].getPossibleValues());
+                }
+            }
+
+            if (ELIGIBLE_SIZE_MATCHING_PAIR == possibleValuesList.size() ) {
+                Set<Byte> allPossibleValues = new HashSet<>();
+                Map<Byte, Byte> mapValueWithNumberOfOccurrences = new HashMap<>();
+                for (Set<Byte> set: possibleValuesList) {
+                    for(Byte value: set) {
+                        allPossibleValues.add(value);
+                        if (mapValueWithNumberOfOccurrences.get(value) == null) {
+                            mapValueWithNumberOfOccurrences.put(value, (byte) 1 );
+                        } else {
+                            mapValueWithNumberOfOccurrences.put(value, (byte) (mapValueWithNumberOfOccurrences.get(value) + (byte) 1));
+                        }
+                    }
+                }
+
+                byte value = 0;
+                for (Map.Entry<Byte, Byte> entry: mapValueWithNumberOfOccurrences.entrySet()) {
+                    if (Byte.valueOf("1").equals(entry.getValue())) {
+                        value = entry.getKey();
+                    }
+                }
+
+                for (byte _row = 0; _row < 9; _row++) {
+                    for (byte _column = 0; _column < 9; _column++) {
+                        if (tableOfNodes[_row][_column].getValue() == null &&
+                                CollectionUtils.isNotEmpty(tableOfNodes[_row][_column].getPossibleValues()) &&
+                                tableOfNodes[_row][_column].getPossibleValues().contains(value)
+                        ) {
+                            tableOfNodes[_row][_column].setValue(value);
+                            tableOfNodes[_row][_column].setPossibleValues(null);
+                        }
+                    }
+                }
+            }
+        }
     }
 
     private byte getCountSame(int hashCodeBefore, int hashCodeAfter, byte countSame) {
@@ -183,6 +226,20 @@ public class SudokuEngine {
         }
     }
 
+    private boolean runBasicSolving(boolean areAllNumbersSet, int hashCodeBefore, int hashCodeAfter) {
+        if (!areAllNumbersSet && (hashCodeBefore == hashCodeAfter)) {
+            boolean carryOnWithBasicSolvingTechnique = true;
+            while (carryOnWithBasicSolvingTechnique) {
+                hashCodeBefore = Arrays.deepHashCode(this.tableOfNodes);
+                basicSolving(this.tableOfNodes);
+                hashCodeAfter = Arrays.deepHashCode(this.tableOfNodes);
+                carryOnWithBasicSolvingTechnique = hashCodeBefore != hashCodeAfter;
+            }
+        }
+
+        return checkAllNumbersSet(this.tableOfNodes);
+    }
+
     private boolean basicSolving(Node[][] tableOfNodes) {
         for (byte row = (byte) 0; row < (byte) 9; row++) {
             ROW_LEVEL:
@@ -261,7 +318,7 @@ public class SudokuEngine {
         return true;
     }
 
-    private void cleanUpPossibleValuesThatBeenFilled(Node[][] tableOfNodes) {
+    private void removePossibleValuesFromNodesThatHaveBeenFilled(Node[][] tableOfNodes) {
         for (byte row = 0; row < 9; row++) {
             for (byte column = 0; column < 9; column++) {
                 if (tableOfNodes[row][column].getValue() != null)
