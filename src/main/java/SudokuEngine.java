@@ -22,24 +22,36 @@ public class SudokuEngine {
             areAllNumbersSet = basicSolving(tableOfNodes);
             hashCodeAfter = Arrays.deepHashCode(this.tableOfNodes);
 
-            if (hashCodeBefore == hashCodeAfter) {
-                countSame++;
-            } else {
-                countSame = 0;
-            }
+            countSame = getCountSame(hashCodeBefore, hashCodeAfter, countSame);
 
-            if (!areAllNumbersSet && (hashCodeBefore == hashCodeAfter)) {
-                boolean carryOnWithTMBTechnique = true;
-                while(carryOnWithTMBTechnique) {
-                    hashCodeBefore = Arrays.deepHashCode(this.tableOfNodes);
-                    tmbTechniqueAllRows();
-                    hashCodeAfter = Arrays.deepHashCode(this.tableOfNodes);
-                    carryOnWithTMBTechnique = hashCodeBefore != hashCodeAfter;
-                }
-                areAllNumbersSet = checkAllNumbersSet(this.tableOfNodes);
-            }
+            runTMBTechnique(areAllNumbersSet, hashCodeBefore, hashCodeAfter);
+
+            areAllNumbersSet = checkAllNumbersSet(this.tableOfNodes);
+
+            // run matching pair technique
         }
         return this.tableOfNodes;
+    }
+
+    private byte getCountSame(int hashCodeBefore, int hashCodeAfter, byte countSame) {
+        if (hashCodeBefore == hashCodeAfter) {
+            countSame++;
+        } else {
+            countSame = 0;
+        }
+        return countSame;
+    }
+
+    private void runTMBTechnique(boolean areAllNumbersSet, int hashCodeBefore, int hashCodeAfter) {
+        if (!areAllNumbersSet && (hashCodeBefore == hashCodeAfter)) {
+            boolean carryOnWithTMBTechnique = true;
+            while(carryOnWithTMBTechnique) {
+                hashCodeBefore = Arrays.deepHashCode(this.tableOfNodes);
+                tmbTechniqueAllRows();
+                hashCodeAfter = Arrays.deepHashCode(this.tableOfNodes);
+                carryOnWithTMBTechnique = hashCodeBefore != hashCodeAfter;
+            }
+        }
     }
 
     private void tmbTechniqueAllRows() {
