@@ -2,8 +2,10 @@ import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class SudokuEngineTest {
 
@@ -25,6 +27,108 @@ public class SudokuEngineTest {
     @Test
     public void shouldReturnCorrectResultForLevel4c() {
         testOutput(expectedOutputLevel4c(), new SudokuEngine().solveSudoku(initialiseInputsLevel4c()));
+    }
+
+    @Test
+    public void shouldSetValueCorrectlyWhenMatchingTechniqueByRow1() {
+        Node node00 = new Node((byte) 0, (byte) 0);
+        Node node01 = new Node((byte) 0, (byte) 1);
+        Node node02 = new Node((byte) 0, (byte) 2);
+        Node node03 = new Node((byte) 0, (byte) 3);
+        Node node04 = new Node((byte) 0, (byte) 4);
+        Node node05 = new Node((byte) 0, (byte) 5);
+        Node node06 = new Node((byte) 0, (byte) 6);
+        Node node07 = new Node((byte) 0, (byte) 7);
+        Node node08 = new Node((byte) 0, (byte) 8);
+
+        node00.setPossibleValues(Set.of((byte) 3, (byte) 5));
+        node01.setPossibleValues(Set.of((byte) 3, (byte) 5));
+        node02.setPossibleValues(Set.of((byte) 3, (byte) 5, (byte) 8));
+
+        Node[] node0 = new Node[]{node00, node01, node02, node03, node04, node05, node06, node07, node08};
+        Node[] node1 = new Node[]{node00, node01, node02, node03, node04, node05, node06, node07, node08};
+        Node[] node2 = new Node[]{node00, node01, node02, node03, node04, node05, node06, node07, node08};
+        Node[] node3 = new Node[]{node00, node01, node02, node03, node04, node05, node06, node07, node08};
+        Node[] node4 = new Node[]{node00, node01, node02, node03, node04, node05, node06, node07, node08};
+        Node[] node5 = new Node[]{node00, node01, node02, node03, node04, node05, node06, node07, node08};
+        Node[] node6 = new Node[]{node00, node01, node02, node03, node04, node05, node06, node07, node08};
+        Node[] node7 = new Node[]{node00, node01, node02, node03, node04, node05, node06, node07, node08};
+        Node[] node8 = new Node[]{node00, node01, node02, node03, node04, node05, node06, node07, node08};
+        Node[][] tableOfNodes = new Node[][]{node0, node1, node2, node3, node4, node5, node6, node7, node8};
+
+        new SudokuEngine().matchingTechniqueByRow(tableOfNodes);
+
+        assertTrue(tableOfNodes[0][2].getValue() == (byte) 8);
+    }
+
+    @Test
+    public void shouldSetValueCorrectlyWhenMatchingTechniqueByRow2() {
+        Node node00 = new Node((byte) 0, (byte) 0);
+        Node node01 = new Node((byte) 0, (byte) 1);
+        Node node02 = new Node((byte) 0, (byte) 2);
+        Node node03 = new Node((byte) 0, (byte) 3);
+        Node node04 = new Node((byte) 0, (byte) 4);
+        Node node05 = new Node((byte) 0, (byte) 5);
+        Node node06 = new Node((byte) 0, (byte) 6);
+        Node node07 = new Node((byte) 0, (byte) 7);
+        Node node08 = new Node((byte) 0, (byte) 8);
+
+        node00.setPossibleValues(Set.of((byte) 3, (byte) 8));
+        node01.setPossibleValues(Set.of((byte) 3, (byte) 8));
+        node02.setPossibleValues(Set.of((byte) 3, (byte) 5));
+
+        Node[] node0 = new Node[]{node00, node01, node02, node03, node04, node05, node06, node07, node08};
+        Node[] node1 = new Node[]{node00, node01, node02, node03, node04, node05, node06, node07, node08};
+        Node[] node2 = new Node[]{node00, node01, node02, node03, node04, node05, node06, node07, node08};
+        Node[] node3 = new Node[]{node00, node01, node02, node03, node04, node05, node06, node07, node08};
+        Node[] node4 = new Node[]{node00, node01, node02, node03, node04, node05, node06, node07, node08};
+        Node[] node5 = new Node[]{node00, node01, node02, node03, node04, node05, node06, node07, node08};
+        Node[] node6 = new Node[]{node00, node01, node02, node03, node04, node05, node06, node07, node08};
+        Node[] node7 = new Node[]{node00, node01, node02, node03, node04, node05, node06, node07, node08};
+        Node[] node8 = new Node[]{node00, node01, node02, node03, node04, node05, node06, node07, node08};
+        Node[][] tableOfNodes = new Node[][]{node0, node1, node2, node3, node4, node5, node6, node7, node8};
+
+        new SudokuEngine().matchingTechniqueByRow(tableOfNodes);
+
+        assertTrue(tableOfNodes[0][2].getValue() == (byte) 5);
+    }
+
+    @Test
+    public void shouldSetValueCorrectlyWhenMatchingTechniqueByRow3() {
+        Node node00 = new Node((byte) 0, (byte) 0);
+        Node node01 = new Node((byte) 0, (byte) 1);
+        Node node02 = new Node((byte) 0, (byte) 2);
+        Node node03 = new Node((byte) 0, (byte) 3);
+        Node node04 = new Node((byte) 0, (byte) 4);
+        Node node05 = new Node((byte) 0, (byte) 5);
+        Node node06 = new Node((byte) 0, (byte) 6);
+        Node node07 = new Node((byte) 0, (byte) 7);
+        Node node08 = new Node((byte) 0, (byte) 8);
+
+        node00.setPossibleValues(Set.of((byte) 3, (byte) 6));
+        node01.setPossibleValues(Set.of((byte) 3, (byte) 8));
+        node02.setPossibleValues(Set.of((byte) 3, (byte) 6, (byte) 8));
+
+        Node[] node0 = new Node[]{node00, node01, node02, node03, node04, node05, node06, node07, node08};
+        Node[] node1 = new Node[]{node00, node01, node02, node03, node04, node05, node06, node07, node08};
+        Node[] node2 = new Node[]{node00, node01, node02, node03, node04, node05, node06, node07, node08};
+        Node[] node3 = new Node[]{node00, node01, node02, node03, node04, node05, node06, node07, node08};
+        Node[] node4 = new Node[]{node00, node01, node02, node03, node04, node05, node06, node07, node08};
+        Node[] node5 = new Node[]{node00, node01, node02, node03, node04, node05, node06, node07, node08};
+        Node[] node6 = new Node[]{node00, node01, node02, node03, node04, node05, node06, node07, node08};
+        Node[] node7 = new Node[]{node00, node01, node02, node03, node04, node05, node06, node07, node08};
+        Node[] node8 = new Node[]{node00, node01, node02, node03, node04, node05, node06, node07, node08};
+        Node[][] tableOfNodes = new Node[][]{node0, node1, node2, node3, node4, node5, node6, node7, node8};
+
+        new SudokuEngine().matchingTechniqueByRow(tableOfNodes);
+
+        assertTrue(tableOfNodes[0][0].getValue() == null);
+        assertTrue(tableOfNodes[0][1].getValue() == null);
+        assertTrue(tableOfNodes[0][2].getValue() == null);
+
+        assertTrue(tableOfNodes[0][0].getPossibleValues().equals(Set.of((byte) 3, (byte) 6)));
+        assertTrue(tableOfNodes[0][1].getPossibleValues().equals(Set.of((byte) 3, (byte) 8)));
+        assertTrue(tableOfNodes[0][2].getPossibleValues().equals(Set.of((byte) 3, (byte) 6, (byte) 8)));
     }
 
     private Node[][] expectedOutputLevel3() {

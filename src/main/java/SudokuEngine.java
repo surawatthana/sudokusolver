@@ -9,7 +9,7 @@ public class SudokuEngine {
 
     final private Set<Byte> ONE_TO_NINE = Set.of((byte) 1, (byte) 2, (byte) 3, (byte) 4, (byte) 5, (byte) 6, (byte) 7, (byte) 8, (byte) 9);
 
-    private final int ELIGIBLE_SIZE_MATCHING_PAIR = 3;
+    private final int ELIGIBLE_3_MATCHING_PAIR = 3;
 
     public Node[][] solveSudoku(Node[][] tableOfNodes) {
         this.tableOfNodes = tableOfNodes;
@@ -17,44 +17,63 @@ public class SudokuEngine {
         int hashCodeBefore = 0;
         int hashCodeAfter = 0;
         byte countSame = 0;
+        byte countTotal = 0;
 
-        while (!areAllNumbersSet && countSame <= 1) {
-            hashCodeBefore = Arrays.deepHashCode(this.tableOfNodes);
-            areAllNumbersSet = basicSolving(tableOfNodes);
-            hashCodeAfter = Arrays.deepHashCode(this.tableOfNodes);
-            countSame = getCountSame(hashCodeBefore, hashCodeAfter, countSame);
+        while (!areAllNumbersSet && countSame <= 3 && countTotal < (byte) 10) {
+            while (!areAllNumbersSet && countSame <= 1) {
+                hashCodeBefore = Arrays.deepHashCode(this.tableOfNodes);
+                areAllNumbersSet = basicSolving(tableOfNodes);
+                hashCodeAfter = Arrays.deepHashCode(this.tableOfNodes);
+                countSame = getCountSame(hashCodeBefore, hashCodeAfter, countSame);
+            }
+            if (areAllNumbersSet){
+                return this.tableOfNodes;
+            }
+            countSame = 0;
+            while (!areAllNumbersSet && countSame <= 1) {
+                hashCodeBefore = Arrays.deepHashCode(this.tableOfNodes);
+                runTMBTechnique(hashCodeBefore, hashCodeAfter);
+                areAllNumbersSet = checkAllNumbersSet(this.tableOfNodes);
+                hashCodeAfter = Arrays.deepHashCode(this.tableOfNodes);
+                countSame = getCountSame(hashCodeBefore, hashCodeAfter, countSame);
+            }
+            if (areAllNumbersSet){
+                return this.tableOfNodes;
+            }
+            countSame = 0;
+            while (!areAllNumbersSet && countSame <= 1) {
+                removePossibleValuesFromNodesThatHaveBeenFilled(this.tableOfNodes);
+                hashCodeBefore = Arrays.deepHashCode(this.tableOfNodes);
+                matchingTechniqueByRow(this.tableOfNodes);
+                areAllNumbersSet = checkAllNumbersSet(this.tableOfNodes);
+                hashCodeAfter = Arrays.deepHashCode(this.tableOfNodes);
+                countSame = getCountSame(hashCodeBefore, hashCodeAfter, countSame);
+            }
+            if (areAllNumbersSet){
+                return this.tableOfNodes;
+            }
+            countSame = 0;
 
-            runTMBTechnique(areAllNumbersSet, hashCodeBefore, hashCodeAfter);
-            areAllNumbersSet = checkAllNumbersSet(this.tableOfNodes);
-
-            removePossibleValuesFromNodesThatHaveBeenFilled(this.tableOfNodes);
+            countTotal++;
         }
         return this.tableOfNodes;
     }
 
-    private void matchingTechniqueByRow(Node[][] tableOfNodes) {
+    public void matchingTechniqueByRow(Node[][] tableOfNodes) {
+        OUTER:
         for (byte row = 0; row < 9; row++) {
             List<Set<Byte>> possibleValuesList = new ArrayList<>();
-            for (byte column = 0; column < 9; column++) {
-                if (tableOfNodes[row][column].getValue() == null &&
-                        CollectionUtils.isNotEmpty(tableOfNodes[row][column].getPossibleValues()) ) {
-                    possibleValuesList.add(tableOfNodes[row][column].getPossibleValues());
-                }
-            }
+            Set<Byte> valuesOfCurrentRow = new HashSet<>();
+            setFilledValuesOfCurrentRow(tableOfNodes, row, valuesOfCurrentRow);
 
-            if (ELIGIBLE_SIZE_MATCHING_PAIR == possibleValuesList.size() ) {
+            if (valuesOfCurrentRow.size() == 9) {continue;}
+
+            getPossibleValuesForAllColumnsInCurrentRow(tableOfNodes, row, possibleValuesList, valuesOfCurrentRow);
+
+            if (ELIGIBLE_3_MATCHING_PAIR == possibleValuesList.size() ) {
                 Set<Byte> allPossibleValues = new HashSet<>();
                 Map<Byte, Byte> mapValueWithNumberOfOccurrences = new HashMap<>();
-                for (Set<Byte> set: possibleValuesList) {
-                    for(Byte value: set) {
-                        allPossibleValues.add(value);
-                        if (mapValueWithNumberOfOccurrences.get(value) == null) {
-                            mapValueWithNumberOfOccurrences.put(value, (byte) 1 );
-                        } else {
-                            mapValueWithNumberOfOccurrences.put(value, (byte) (mapValueWithNumberOfOccurrences.get(value) + (byte) 1));
-                        }
-                    }
-                }
+                doMapValueWithNumberOfOccurrences(possibleValuesList, allPossibleValues, mapValueWithNumberOfOccurrences);
 
                 byte value = 0;
                 for (Map.Entry<Byte, Byte> entry: mapValueWithNumberOfOccurrences.entrySet()) {
@@ -63,17 +82,51 @@ public class SudokuEngine {
                     }
                 }
 
-                for (byte _row = 0; _row < 9; _row++) {
-                    for (byte _column = 0; _column < 9; _column++) {
-                        if (tableOfNodes[_row][_column].getValue() == null &&
-                                CollectionUtils.isNotEmpty(tableOfNodes[_row][_column].getPossibleValues()) &&
-                                tableOfNodes[_row][_column].getPossibleValues().contains(value)
-                        ) {
-                            tableOfNodes[_row][_column].setValue(value);
-                            tableOfNodes[_row][_column].setPossibleValues(null);
-                        }
+                for (byte _column = 0; _column < 9; _column++) {
+                    if (tableOfNodes[row][_column].getValue() == null &&
+                            CollectionUtils.isNotEmpty(tableOfNodes[row][_column].getPossibleValues()) &&
+                            tableOfNodes[row][_column].getPossibleValues().contains(value)
+                    ) {
+                        tableOfNodes[row][_column].setValue(value);
+                        tableOfNodes[row][_column].setPossibleValues(null);
                     }
                 }
+            }
+        }
+    }
+
+    private void doMapValueWithNumberOfOccurrences(List<Set<Byte>> possibleValuesList, Set<Byte> allPossibleValues, Map<Byte, Byte> mapValueWithNumberOfOccurrences) {
+        for (Set<Byte> set: possibleValuesList) {
+            for(Byte value: set) {
+                allPossibleValues.add(value);
+                if (mapValueWithNumberOfOccurrences.get(value) == null) {
+                    mapValueWithNumberOfOccurrences.put(value, (byte) 1 );
+                } else {
+                    mapValueWithNumberOfOccurrences.put(value, (byte) (mapValueWithNumberOfOccurrences.get(value) + (byte) 1));
+                }
+            }
+        }
+    }
+
+    private void getPossibleValuesForAllColumnsInCurrentRow(Node[][] tableOfNodes, byte row, List<Set<Byte>> possibleValuesList, Set<Byte> valuesOfCurrentRow) {
+        for (byte column = 0; column < 9; column++) {
+            if (tableOfNodes[row][column].getValue() == null &&
+                    CollectionUtils.isNotEmpty(tableOfNodes[row][column].getPossibleValues()) ) {
+                Set<Byte> possibleValues = new HashSet<>(tableOfNodes[row][column].getPossibleValues());
+                for (Byte myByte : tableOfNodes[row][column].getPossibleValues()) {
+                    if (valuesOfCurrentRow.contains(myByte)) {
+                        possibleValues.remove(myByte);
+                    }
+                }
+                possibleValuesList.add(possibleValues);
+            }
+        }
+    }
+
+    private void setFilledValuesOfCurrentRow(Node[][] tableOfNodes, byte row, Set<Byte> valuesOfCurrentRow) {
+        for (byte checkColumn = 0; checkColumn < 9 ; checkColumn++) {
+            if (tableOfNodes[row][checkColumn].getValue() != null) {
+                valuesOfCurrentRow.add(tableOfNodes[row][checkColumn].getValue());
             }
         }
     }
@@ -87,8 +140,8 @@ public class SudokuEngine {
         return countSame;
     }
 
-    private void runTMBTechnique(boolean areAllNumbersSet, int hashCodeBefore, int hashCodeAfter) {
-        if (!areAllNumbersSet && (hashCodeBefore == hashCodeAfter)) {
+    private void runTMBTechnique(int hashCodeBefore, int hashCodeAfter) {
+        if (hashCodeBefore == hashCodeAfter) {
             boolean carryOnWithTMBTechnique = true;
             while(carryOnWithTMBTechnique) {
                 hashCodeBefore = Arrays.deepHashCode(this.tableOfNodes);
@@ -129,8 +182,10 @@ public class SudokuEngine {
                 for (byte column = 0; column < 9; column++) {
                     if (tableOfNodes[row][column].getValue() != null && tableOfNodes[row][column].getValue() == numberLookingFor) {
                         byte section = Group.getSectionNumber(new Group(row, column));
-                        occupiedNodes[count] = new OccupiedNode(section, row, column, numberLookingFor);
-                        count++;
+                        if (count < 3) {
+                            occupiedNodes[count] = new OccupiedNode(section, row, column, numberLookingFor);
+                            count++;
+                        }
                     }
                 }
             }
